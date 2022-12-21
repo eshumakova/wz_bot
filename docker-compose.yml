@@ -1,0 +1,30 @@
+version: '3.5'
+
+services:
+  myredis:
+    image: redis:latest
+    container_name: myredis
+    expose: 
+        - 6379
+    command: ["redis-server"]
+    restart: always
+    networks:
+      - redis_net
+
+  wz:
+    image: eshumakova/wz
+    command: python3 main.py
+    depends_on:
+      - myredis
+    environment:
+        - REDIS_HOST=redis://myredis
+    expose: 
+        - 6379
+    restart: always
+    networks:
+      - redis_net
+
+networks:
+  redis_net:
+    driver: bridge
+
